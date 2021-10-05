@@ -23,30 +23,34 @@ function usage() {
   exit 1
 }
 
+# Args: updated --> String
+function test_update_status() {
+  updated=$1
+
+  # Was updating successful?
+  if [[ "$?" -eq 0 ]]; then
+    echo -e "$SUCCESS Updated $updated!"
+  else
+    echo -e "$FAILURE Error occurred when updating $updated"
+  fi
+}
+
 function update_layman_repositories() {
   echo -e "$INFO Updating Layman repositories..."
-  if layman -S 1>/dev/null ; then
-    echo -e "$SUCCESS Layman repositories updated!"
-  else
-    echo -e "$FAILURE Error occurred when updating Layman repositories"
-  fi
+  layman -S | tee /dev/null
+  test_update_status "Layman repositories"
 }
 
 function update_portage_repositories() {
   echo -e "$INFO Syncing Portage..."
   portage_update_available="$(emerge --sync | tee /dev/null | grep 'An update to portage is available')"
-
-  # Was updating successful?
-  if [[ "$?" -eq 0 ]]; then
-    echo -e "$SUCCESS Portage repositories updated!"
-  else
-    echo -e "$FAILURE Error occurred when updating Portage repositories"
-  fi
+  test_update_status "Portage repositories"
 
   # Update Portage automatically if an update is available
   if [[ $portage_update_available ]]; then
     echo -e "$INFO Updating Portage..."
     emerge --oneshot sys-apps/portage
+    test_update_status "Portage"
   fi
 }
 
@@ -59,16 +63,15 @@ function update_package_repositories() {
 # --important
 function important_packages_update() {
   echo -e "$INFO Updating important packages..."
-  #$EMERGE_DEEP_UPDATE --oneshot vim linux-firmware linux-headers gentoo-sources btop htop firefox-bin nvidia-drivers
-  $EMERGE_DEEP_UPDATE --oneshot gentoo-sources
-  echo -e "$SUCCESS Important packages updated!"
+  $EMERGE_DEEP_UPDATE --oneshot vim linux-firmware linux-headers gentoo-sources btop htop firefox-bin nvidia-drivers
+  test_update_status "important packages"
 }
 
 # --full-update
 function full_system_update() {
   echo -e "$INFO Updating the full system..."
   $EMERGE_DEEP_UPDATE @world
-  echo -e "$SUCCESS Updated the full system!"
+  test_update_status "full system"
 }
 
 ### MAIN
