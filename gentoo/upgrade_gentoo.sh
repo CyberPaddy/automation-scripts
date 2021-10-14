@@ -110,3 +110,9 @@ else
     full_system_update
   fi
 fi
+
+echo -ne "Would you like to update the kernel to the newest version? (y/N): "
+read update_kernel
+if [[ "$update_kernel" =~ ^Y|y$ ]]; then
+  /home/teemu/bin/kernel-install.sh
+fi
