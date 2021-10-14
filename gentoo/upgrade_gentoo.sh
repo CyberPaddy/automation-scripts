@@ -107,6 +107,6 @@ else
   read update_full_system
   
   if [[ "$update_full_system" =~ ^Y|y$ ]]; then
-    update_package_repositories
+    full_system_update
   fi
 fi
