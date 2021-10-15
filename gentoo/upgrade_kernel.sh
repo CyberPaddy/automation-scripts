@@ -7,9 +7,10 @@ GREY='\033[30;1m'
 RED='\033[0;31m'
 
 # Echo prefixes
-FAILURE="[$RED!$NC]"
-INFO="[$GREY*$NC]"
-SUCCESS="[$GREEN+$NC]"
+COMMAND="[CMD]"
+FAILURE="[ $RED!$NC ]"
+INFO="[ $GREY*$NC ]"
+SUCCESS="[ $GREEN+$NC ]"
 
 # Initialize variables
 COMMAND_LINE_PARAMETERS="$@"
