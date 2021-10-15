@@ -64,6 +64,16 @@ function get_newest_kernel_version() {
   fi
 }
 
+# Args: Command to be executed
+function execute_command_verbose() {
+  cmd="$1"
+  if [[ "$COMMAND_LINE_PARAMETERS" =~ "--verbose" ]]; then
+    echo -e "$COMMAND $cmd" # Print the command
+  fi
+
+  $cmd # Run the command
+}
+
 # Parameter $1 ==> Message to be printed
 function echo_if_verbose() { 
   message="$1"
@@ -87,7 +97,7 @@ function test_command_status() {
 function execute_and_test() {
   cmd="$1"
   echo -e "$INFO Running command '$cmd'"
-  $cmd
+  execute_command_verbose "$cmd"
   test_command_status "$cmd"
 }
 
@@ -125,13 +135,13 @@ function update_grub() {
   echo -e "$INFO Updating $update_target..."
 
   echo_if_verbose "Mounting $dev to $mount_location" # -v | --version
-  mount $dev $mount_location 
+  execute_command_verbose "mount $dev $mount_location"
 
   echo_if_verbose "Changing grub.cfg to use the new kernel version"
-  sed -i "s/$OLD_KERNEL_VERSION/$NEW_KERNEL_VERSION/g" $grub_location
+  execute_command_verbose "sed -i s/$OLD_KERNEL_VERSION/$NEW_KERNEL_VERSION/g $grub_location"
 
   echo_if_verbose "Un-mounting $dev"
-  umount $dev
+  execute_command_verbose "umount $dev"
 
   echo -e "$SUCCESS Updated $update_target!\n"
 }
@@ -141,11 +151,10 @@ function update_kernel_symlink() {
   echo -e "$INFO Updating $update_target..."
   
   echo_if_verbose "Removing old symlink /usr/src/linux"
-  rm /usr/src/linux
+  execute_command_verbose "rm /usr/src/linux"
   
-  symlink_command="ln -s /usr/src/linux-$NEW_KERNEL_VERSION /usr/src/linux"
-  echo_if_verbose "Creating new symlink /usr/src/linux...\nCommand: $symlink_command"
-  $symlink_command
+  echo_if_verbose "Creating new symlink /usr/src/linux..."
+  execute_command_verbose "ln -s /usr/src/linux-$NEW_KERNEL_VERSION /usr/src/linux"
 
   echo -e "$SUCCESS Updated $update_target!\n"
 }
