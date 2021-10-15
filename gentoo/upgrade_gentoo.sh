@@ -112,7 +112,7 @@ else
   fi
 fi
 
-update_kernel_script="/home/teemu/bin/kernel-install.sh"
+update_kernel_script="upgrade_kernel.sh"
 
 if [[ "$1" =~ ^-a|--all$ ]]; then
   $update_kernel_script --all
