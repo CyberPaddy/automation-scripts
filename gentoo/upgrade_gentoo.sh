@@ -58,15 +58,7 @@ function update_layman_repositories() {
 
 function update_portage_repositories() {
   echo -e "$INFO Syncing Portage..."
-  portage_update_available="$(emerge --sync | tee /dev/null | grep 'An update to portage is available')"
-  test_update_status "Portage repositories"
-
-  # Update Portage automatically if an update is available
-  if [[ $portage_update_available ]]; then
-    echo -e "$INFO Updating Portage..."
-    emerge --oneshot sys-apps/portage
-    test_update_status "Portage"
-  fi
+  execute_command_verbose "emerge --sync"
 }
 
 # --update
