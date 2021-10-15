@@ -52,7 +52,7 @@ function test_update_status() {
 
 function update_layman_repositories() {
   echo -e "$INFO Updating Layman repositories..."
-  layman -S | tee /dev/null
+  execute_command_verbose "layman -S"
   test_update_status "Layman repositories"
 }
 
