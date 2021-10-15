@@ -122,11 +122,11 @@ fi
 update_kernel_script="upgrade_kernel.sh"
 
 if [[ "$1" =~ ^-a|--all$ ]]; then
-  $update_kernel_script --all
+  $update_kernel_script $COMMAND_LINE_PARAMETERS
 else
   echo -ne "Would you like to update the kernel to the newest version? (y/N): "
   read update_kernel
   if [[ "$update_kernel" =~ ^Y|y$ ]]; then
-    $update_kernel_script
+    $update_kernel_script $COMMAND_LINE_PARAMETERS
   fi
 fi
