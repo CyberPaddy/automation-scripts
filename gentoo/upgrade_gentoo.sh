@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Initialize global variables
+COMMAND_LINE_PARAMETERS="$@"
 EMERGE_DEEP_UPDATE="emerge --verbose --update --deep --newuse --changed-use --with-bdeps=y --keep-going"
 
 # Color options
@@ -21,6 +24,16 @@ function usage() {
   fi
   echo "Usage: $0 [--all] [--update] [--full-update]" 1>&2;
   exit 1
+}
+
+# Args: Command to be executed
+function execute_command_verbose() {
+  cmd="$1"
+  if [[ "$COMMAND_LINE_PARAMETERS" =~ --verbose ]]; then
+    echo -e "$COMMAND $cmd" # Print the command
+  fi
+
+  $cmd # Run the command
 }
 
 # Args: updated --> String
@@ -63,14 +76,14 @@ function update_package_repositories() {
 # --important
 function important_packages_update() {
   echo -e "$INFO Updating important packages..."
-  $EMERGE_DEEP_UPDATE --oneshot vim linux-firmware linux-headers gentoo-sources btop htop firefox-bin nvidia-drivers
+  execute_command_verbose "$EMERGE_DEEP_UPDATE --oneshot portage vim linux-firmware linux-headers gentoo-sources btop htop firefox-bin nvidia-drivers"
   test_update_status "important packages"
 }
 
 # --full-update
 function full_system_update() {
   echo -e "$INFO Updating the full system..."
-  $EMERGE_DEEP_UPDATE @world
+  execute_command_verbose "$EMERGE_DEEP_UPDATE @world"
   test_update_status "full system"
 }
 
