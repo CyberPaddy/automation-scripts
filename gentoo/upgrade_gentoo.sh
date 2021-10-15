@@ -19,7 +19,7 @@ function usage() {
   else
     echo -e "$SUCCESS This script must be run as root"
   fi
-  echo "Usage: $0 [--update] [--full-update]" 1>&2;
+  echo "Usage: $0 [--all] [--update] [--full-update]" 1>&2;
   exit 1
 }
 
