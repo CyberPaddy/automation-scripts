@@ -112,8 +112,14 @@ else
   fi
 fi
 
-echo -ne "Would you like to update the kernel to the newest version? (y/N): "
-read update_kernel
-if [[ "$update_kernel" =~ ^Y|y$ || "$1" =~ ^-a|--all$ ]]; then
-  /home/teemu/bin/kernel-install.sh
+update_kernel_script="/home/teemu/bin/kernel-install.sh"
+
+if [[ "$1" =~ ^-a|--all$ ]]; then
+  $update_kernel_script
+else
+  echo -ne "Would you like to update the kernel to the newest version? (y/N): "
+  read update_kernel
+  if [[ "$update_kernel" =~ ^Y|y$ ]]; then
+    $update_kernel_script
+  fi
 fi
