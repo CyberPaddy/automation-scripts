@@ -115,7 +115,7 @@ fi
 update_kernel_script="/home/teemu/bin/kernel-install.sh"
 
 if [[ "$1" =~ ^-a|--all$ ]]; then
-  $update_kernel_script
+  $update_kernel_script --all
 else
   echo -ne "Would you like to update the kernel to the newest version? (y/N): "
   read update_kernel
