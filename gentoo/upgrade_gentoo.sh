@@ -29,7 +29,7 @@ function test_update_status() {
 
   # Was updating successful?
   if [[ "$?" -eq 0 ]]; then
-    echo -e "$SUCCESS Updated $updated!"
+    echo -e "$SUCCESS Updated $updated!\n"
   else
     echo -e "$FAILURE Error occurred when updating $updated"
   fi
