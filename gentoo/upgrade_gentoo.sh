@@ -78,7 +78,7 @@ function full_system_update() {
 if [[ "$1" =~ ^-h|--help$ || $EUID -ne 0 ]]; then usage; fi # Print usage message and exit
 
 # --update argument
-if [[ "$@" == *"--update"* ]]; then
+if [[ "$@" == *"--update"* || "$1" =~ ^-a|--all$ ]]; then
   update_package_repositories
 else
   echo -ne "Would you like to update Layman and Portage package repositories? (y/N): "
@@ -92,7 +92,8 @@ fi
 # Check update related command line arguments
 if [[ "$@" == *"--important"* ]]; then
   important_packages_update
-elif [[ "$@" == *"--full-update"* ]]; then
+
+elif [[ "$@" == *"--full-update"* || "$1" =~ ^-a|--all$ ]]; then
   full_system_update
 
 # Ask user if no update related command line arguments are given
@@ -100,19 +101,19 @@ else
   echo -ne "Would you like to update important packages? (y/N): "
   read update_important_packages
   
-  if [[ "$update_important_packages" =~ ^Y|y$ ]]; then
+  if [[ "$update_important_packages" =~ ^Y|y$ || "$1" =~ ^-a|--all$ ]]; then
     important_packages_update
   fi
   echo -ne "Would you like to perform full system update? (y/N): "
   read update_full_system
   
-  if [[ "$update_full_system" =~ ^Y|y$ ]]; then
+  if [[ "$update_full_system" =~ ^Y|y$ || "$1" =~ ^-a|--all$ ]]; then
     full_system_update
   fi
 fi
 
 echo -ne "Would you like to update the kernel to the newest version? (y/N): "
 read update_kernel
-if [[ "$update_kernel" =~ ^Y|y$ ]]; then
+if [[ "$update_kernel" =~ ^Y|y$ || "$1" =~ ^-a|--all$ ]]; then
   /home/teemu/bin/kernel-install.sh
 fi
