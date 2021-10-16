@@ -60,6 +60,7 @@ function update_layman_repositories() {
 function update_portage_repositories() {
   echo -e "$INFO Syncing Portage..."
   execute_command_verbose "emerge --sync"
+  test_update_status "Portage repositories"
 }
 
 # --update
@@ -80,6 +81,10 @@ function full_system_update() {
   echo -e "$INFO Updating the full system..."
   execute_command_verbose "$EMERGE_DEEP_UPDATE @world"
   test_update_status "full system"
+  
+  echo -e "$INFO Removing old package versions..."
+  execute_command_verbose "emerge --depclean"
+  echo -e "$SUCCESS Removed old package versions!\n"
 }
 
 ### MAIN
