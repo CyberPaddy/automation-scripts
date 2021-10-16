@@ -176,6 +176,16 @@ function update_kernel_symlink() {
   echo -e "$SUCCESS Updated $update_target!\n"
 }
 
+function reinstall_kernel_modules() {
+  echo_if_verbose "It is recommended to reinstall kernel modules installed from Portage"
+  run_command "emerge @module-rebuild" "--module-rebuild" "--no-module-rebuild"
+}
+
+function reboot_system() {
+  echo_if_verbose "The system must be rebooted to use the new kernel"
+  run_command "reboot" "--reboot" "--no-reboot"
+}
+
 ### MAIN
 
 # The script should be executed with root privileges
@@ -188,14 +198,9 @@ get_newest_kernel_version
 install_new_kernel
 
 # Do the following actions only if the new kernel was installed
-if [[ "$?" == "1" ]]; then # run_command returns 1 if command was executed
-  update_grub
-  update_kernel_symlink
-  echo -e "$SUCCESS Kernel $NEW_KERNEL_VERSION installed successfully!\n"
-  
-  echo_if_verbose "It is recommended to reinstall kernel modules installed from Portage"
-  run_command "emerge -v @module-rebuild" "--module-rebuild" "--no-module-rebuild"
-
-  echo_if_verbose "The system must be rebooted to use the new kernel"
-  run_command "reboot" "--reboot" "--no-reboot"
+if [[ "$kernel_installed_successfully" == "1" ]]; then
+  update_grub               # Include new kernel to Grub configuration
+  update_kernel_symlink     # Point /usr/src/linux to the new kernel sources
+  reinstall_kernel_modules  # Reinstall kernel modules installed from Portage (Nvidia)
+  reboot_system             # Asks the user if --reboot parameter is not given
 fi
