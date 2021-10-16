@@ -177,6 +177,8 @@ function update_kernel_symlink() {
 }
 
 ### MAIN
+
+# The script should be executed with root privileges
 if [[ "$1" =~ ^-h|--help$ || $EUID -ne 0 ]]; then usage; fi # Print usage message and exit
 
 # Check if there is newer kernel version available on the system or in Portage
