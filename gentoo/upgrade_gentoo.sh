@@ -47,6 +47,7 @@ function test_update_status() {
     echo -e "$SUCCESS Updated $updated!\n"
   else
     echo -e "$FAILURE Error occurred when updating $updated"
+    exit 1
   fi
 }
 
