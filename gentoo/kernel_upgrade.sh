@@ -50,20 +50,6 @@ Command Line Parameters:
   exit 0
 }
 
-function get_newest_kernel_version() {
-  echo -e "$INFO Current kernel version: $OLD_KERNEL_VERSION"
-  echo -e "$INFO Fetching kernel versions from Portage..."
-  
-  NEW_KERNEL_VERSION="$(equery list -po gentoo-sources | tail -1 | cut -d "-" -f 4)-gentoo"
-  
-  if [[ $NEW_KERNEL_VERSION == "$OLD_KERNEL_VERSION" ]]; then
-    echo -e "$SUCCESS Newest kernel version is already installed!\n"
-    exit 0
-  else
-    echo -e "$SUCCESS New kernel version found: $NEW_KERNEL_VERSION\n"
-  fi
-}
-
 # Args: Command to be executed
 function execute_command_verbose() {
   cmd="$1"
@@ -126,6 +112,37 @@ function run_command() {
   return 0
 }
 
+function get_newest_kernel_version() {
+  echo -e "$INFO Current kernel version: $OLD_KERNEL_VERSION"
+  echo -e "$INFO Fetching kernel versions from Portage..."
+  
+  NEW_KERNEL_VERSION="$(equery list -po gentoo-sources | tail -1 | cut -d "-" -f 4)-gentoo"
+  
+  if [[ $NEW_KERNEL_VERSION == "$OLD_KERNEL_VERSION" ]]; then
+    echo -e "$SUCCESS Newest kernel version is already installed!\n"
+    exit 0
+  else
+    echo -e "$SUCCESS New kernel version found: $NEW_KERNEL_VERSION\n"
+  fi
+}
+
+function install_new_kernel() {
+  NEW_KERNEL_DIRECTORY="/usr/src/linux-$NEW_KERNEL_VERSION"
+  cd $NEW_KERNEL_DIRECTORY
+  
+  # Run 'make oldconfig' command if user allows it or uses argument --oldconfig
+  run_command "make oldconfig" "--oldconfig" "--no-oldconfig"
+  
+  # Compile kernel if user allows it or uses argument --compile
+  run_command "make -j$CPU_CORES" "--compile" "--no-compile"
+  run_command "make -j$CPU_CORES modules_install" "--compile" "--no-compile"
+  
+  # Install the kernel to /boot directory
+  run_command "make install" "--install" "--no-install"
+  kernel_installed_successfully="$?"
+  echo -e "$SUCCESS Kernel $NEW_KERNEL_VERSION installed successfully!\n"
+}
+
 function update_grub() {
   dev="/dev/nvme0n1p2" # Device where Grub is installed
   mount_location="/mnt/arch" # Where dev will be mounted
@@ -165,18 +182,8 @@ if [[ "$1" =~ ^-h|--help$ || $EUID -ne 0 ]]; then usage; fi # Print usage messag
 # Check if there is newer kernel version available on the system or in Portage
 get_newest_kernel_version
 
-NEW_KERNEL_DIRECTORY="/usr/src/linux-$NEW_KERNEL_VERSION"
-cd $NEW_KERNEL_DIRECTORY
-
-# Run 'make oldconfig' command if user allows it or uses argument --oldconfig
-run_command "make oldconfig" "--oldconfig" "--no-oldconfig"
-
-# Compile kernel if user allows it or uses argument --compile
-run_command "make -j$CPU_CORES" "--compile" "--no-compile"
-run_command "make -j$CPU_CORES modules_install" "--compile" "--no-compile"
-
-# Install the kernel to /boot directory
-run_command "make install" "--install" "--no-install"
+# Configure, compile and install the new kernel
+install_new_kernel
 
 # Do the following actions only if the new kernel was installed
 if [[ "$?" == "1" ]]; then # run_command returns 1 if command was executed
