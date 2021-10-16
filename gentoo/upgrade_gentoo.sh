@@ -119,7 +119,7 @@ else
   fi
 fi
 
-update_kernel_script="upgrade_kernel.sh"
+update_kernel_script="kernel_upgrade.sh"
 
 if [[ "$1" =~ ^-a|--all$ ]]; then
   $update_kernel_script $COMMAND_LINE_PARAMETERS
