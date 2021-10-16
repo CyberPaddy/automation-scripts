@@ -83,7 +83,13 @@ function full_system_update() {
   test_update_status "full system"
   
   echo -e "$INFO Removing old package versions..."
-  execute_command_verbose "emerge --depclean"
+  
+  if [[ "$COMMAND_LINE_PARAMETERS" =~ --verbose ]]; then emerge_depclean_command="emerge --depclean"; else emerge_depclean_command="emerge --depclean --quiet"; fi
+  execute_command_verbose "$emerge_depclean_command"
+
+  if [[ "$COMMAND_LINE_PARAMETERS" =~ --verbose ]]; then eclean_dist_command="eclean-dist -d"; else eclean_dist_command="eclean-dist -d --quiet"; fi
+  execute_command_verbose "$eclean_dist_command"
+
   echo -e "$SUCCESS Removed old package versions!\n"
 }
 
