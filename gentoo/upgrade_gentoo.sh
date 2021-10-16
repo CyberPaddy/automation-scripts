@@ -2,7 +2,7 @@
 
 # Initialize global variables
 COMMAND_LINE_PARAMETERS="$@"
-EMERGE_DEEP_UPDATE="emerge --verbose --update --deep --newuse --changed-use --with-bdeps=y --keep-going"
+EMERGE_DEEP_UPDATE="emerge --update --deep --newuse --changed-use --with-bdeps=y --keep-going"
 
 # Color options
 NC='\033[0m' # No Color
